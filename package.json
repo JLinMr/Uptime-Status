@@ -9,6 +9,7 @@
     "type": "git",
     "url": "https://github.com/JLinmr/Uptime-Status"
   },
+  "repositoryUrl": "https://github.com/JLinmr/Uptime-Status", 
   "type": "module",
   "scripts": {
     "dev": "vite",
