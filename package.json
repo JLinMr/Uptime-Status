@@ -2,12 +2,12 @@
   "name": "uptime-status",
   "version": "1.0.0",
   "private": true,
-  "author": "JLinmr",
+  "author": "Xn.Eason",
   "url": "https://www.bsgun.cn",
-  "email": "ruoms@qq.com",
+  "email": "xn.easonchan@gmail.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JLinmr/Uptime-Status"
+    "url": "https://github.com/xneason/Uptime-Status"
   },
   "type": "module",
   "scripts": {
