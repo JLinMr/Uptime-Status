@@ -36,6 +36,10 @@ VITE_UPTIMEROBOT_API_URL = "/api/status"
 
 # 以下任选其一，供边缘函数使用
 UPTIMEROBOT_API_KEY = "你的 Read-Only API Key"
+
+# 可选访问密码：服务端运行时配置，留空公开访问；建议使用长随机密码
+# Cloudflare 可设置为 Secret；修改后重新部署，登录后 7 天内刷新免输密码
+SERVER_ACCESS_PASSWORD = ""
 ```
 
 ## 部署说明

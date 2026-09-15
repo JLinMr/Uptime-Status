@@ -142,6 +142,11 @@ VITE_UPTIMEROBOT_API_URL = "/api/status"
 
 # 站点名称
 VITE_APP_TITLE = "梦爱吃鱼"
+
+# 访问密码（可选）：留空公开访问；请使用长随机密码
+# 在部署平台的服务端环境变量中设置（Cloudflare 可使用 Secret），修改后重新部署
+# 本地可在 .env.local 设置；需部署同源 /api/status 函数，登录后 7 天内刷新免输密码
+SERVER_ACCESS_PASSWORD = ""
 ```
 
 > 已移除 `VITE_UPTIMEROBOT_STATUS_SORT` 配置项，排序请在页面右上角选择，偏好会自动保存到浏览器。
@@ -178,4 +183,4 @@ npm run build
 - [UptimeRobot](https://uptimerobot.com/) - 提供监控 API 支持
 - [Vue.js](https://vuejs.org/) - 前端框架
 - [Tailwind CSS](https://tailwindcss.com/) - CSS 框架
-- [Chart.js](https://www.chartjs.org/) - 图表库 
+- [Chart.js](https://www.chartjs.org/) - 图表库

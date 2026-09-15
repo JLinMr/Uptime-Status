@@ -1,3 +1,4 @@
+import { accessGate, serverPassword } from '../lib/access.js'
 const API = 'https://api.uptimerobot.com/v3'
 const DAY30 = 30 * 24 * 60 * 60 * 1000
 export const CACHE_TTL_MS = 5 * 60 * 1000
@@ -13,7 +14,7 @@ export class RateLimitError extends Error {
 const trim = (v) => v?.replace(/^["']|["']$/g, '').trim()
 const absUrl = (path) => path.startsWith('http') ? path : `${API}${path.startsWith('/') ? path : `/${path}`}`
 
-const keyOf = (o = {}) => trim(o.apiKey) || trim(o.api_key)  || trim(o?.env?.UPTIMEROBOT_API_KEY) || trim(o?.env?.VITE_UPTIMEROBOT_API_KEY)  || trim(process.env.UPTIMEROBOT_API_KEY) || trim(process.env.VITE_UPTIMEROBOT_API_KEY)
+const keyOf = (o = {}) => trim(o.apiKey) || trim(o.api_key)  || trim(o?.env?.UPTIMEROBOT_API_KEY) || trim(o?.env?.VITE_UPTIMEROBOT_API_KEY)  || trim(typeof process !== 'undefined' ? process.env?.UPTIMEROBOT_API_KEY : undefined) || trim(typeof process !== 'undefined' ? process.env?.VITE_UPTIMEROBOT_API_KEY : undefined)
 
 async function get(apiKey, url) {
   const res = await fetch(url, {
@@ -114,6 +115,17 @@ export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: '只支持 GET / POST' })
 
   try {
+    const protocol = req.headers['x-forwarded-proto'] === 'http' ? 'http' : 'https'
+    const request = new Request(`${protocol}://${req.headers.host}${req.url}`, {
+      method: req.method, headers: req.headers,
+      ...(req.method === 'POST' ? { body: typeof req.body === 'string' ? req.body : JSON.stringify(req.body ?? {}) } : {})
+    })
+    const denied = await accessGate(request)
+    if (denied) {
+      denied.headers.forEach((v, k) => res.setHeader(k, v))
+      return res.status(denied.status).send(await denied.text())
+    }
+    res.setHeader('Cache-Control', 'private, no-store')
     const apiKey = keyOf({})
       || req.headers.authorization?.replace(/^Bearer\s+/i, '')
       || req.query?.api_key || req.query?.apiKey
@@ -124,7 +136,7 @@ export default async function handler(req, res) {
     }
     const force = ['1', 'true'].includes(String(req.query?.refresh))
     const data = await getCachedMonitorStatus(apiKey, { force })
-    res.setHeader('Cache-Control', `public, max-age=${CACHE_TTL_MS / 1000 | 0}`)
+    res.setHeader('Cache-Control', serverPassword() ? 'private, no-store' : `public, max-age=${CACHE_TTL_MS / 1000 | 0}`)
     return res.json(data)
   } catch (e) {
     if (e instanceof RateLimitError) {

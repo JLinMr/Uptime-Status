@@ -1,4 +1,15 @@
 export default {
+  access: {
+    showPassword: '显示密码',
+    hidePassword: '隐藏密码',
+    checking: '正在验证…',
+    password: '访问密码',
+    login: '进入面板',
+    logout: '退出登录',
+    retry: '重试',
+    wrong: '密码不正确',
+    connection: '无法验证访问权限，请检查服务端配置或网络连接。'
+  },
   common: {
     title: '状态监控',
     refreshIn: '刷新时间',

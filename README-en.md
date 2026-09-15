@@ -142,6 +142,11 @@ VITE_UPTIMEROBOT_API_URL = "/api/status"
 
 # Website Title
 VITE_APP_TITLE = "Website Monitor"
+
+# Optional access password: empty means public access; use a long random password
+# Set as a server runtime variable (Secret on Cloudflare), then redeploy
+# Locally use .env.local; requires same-origin /api/status functions; login lasts 7 days
+SERVER_ACCESS_PASSWORD = ""
 ```
 
 > `VITE_UPTIMEROBOT_STATUS_SORT` has been removed. Use the sort control in the page header; your preference is saved in the browser.

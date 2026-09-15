@@ -56,6 +56,14 @@
           shadow-sm shadow-gray-200/50 dark:shadow-gray-900/30 hover:bg-gray-50 dark:hover:bg-gray-700">
         <span class="text-xs font-bold">{{ locale === 'zh-CN' ? 'EN' : '中' }}</span>
       </button>
+      <button v-if="showLogout" type="button" @click="$emit('logout')"
+        :title="t('access.logout')" :aria-label="t('access.logout')"
+        class="flex shrink-0 items-center justify-center w-9 h-9 rounded-full transition-all duration-200
+          bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300
+          shadow-sm shadow-gray-200/50 dark:shadow-gray-900/30 hover:bg-gray-50 dark:hover:bg-gray-700
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40">
+        <Icon icon="ph:sign-out-bold" class="w-4 h-4" />
+      </button>
     </div>
   </div>
 </template>
@@ -70,9 +78,10 @@ const props = defineProps({
   title: { type: String, required: true },
   isRefreshing: { type: Boolean, default: false },
   isDark: { type: Boolean, default: false },
+  showLogout: { type: Boolean, default: false },
   sort: { type: Object, default: () => ({ key: 'friendlyName', order: 'asc' }) }
 })
-const emit = defineEmits(['refresh', 'toggle-theme', 'toggle-language', 'update:sort'])
+const emit = defineEmits(['refresh', 'toggle-theme', 'toggle-language', 'update:sort', 'logout'])
 
 const SORT_KEYS = ['friendlyName', 'createDateTime', 'status']
 const KEY_ICON = { friendlyName: 'ph:text-aa-bold', createDateTime: 'ph:clock-bold', status: 'ph:circles-three-bold' }

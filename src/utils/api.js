@@ -1,3 +1,4 @@
+import { accessEnabled, accessUrl, clearMonitorCache } from './access'
 import axios from 'axios'
 import {
   fetchMonitorStatus,
@@ -42,6 +43,11 @@ export const waitRetry = (sec, onTick) => {
 }
 
 const axiosErr = (e) => {
+  if (e.response?.status === 401 && accessEnabled) {
+    clearMonitorCache()
+    window.dispatchEvent(new Event('uptime-unauthorized'))
+    throw new Error('Authentication required')
+  }
   if (e.response?.status === 429) {
     const w = Number(e.response.data?.retryAfter) || Number(e.response.headers?.['retry-after']) || 60
     throw new RateLimitError(w)
@@ -51,7 +57,7 @@ const axiosErr = (e) => {
 
 async function proxyGet(params) {
   try {
-    return (await axios.get(URL, { timeout: 60000, params, headers: HDRS })).data
+    return (await axios.get(accessEnabled ? accessUrl : URL, { timeout: 60000, params, headers: HDRS })).data
   } catch (e) { axiosErr(e) }
 }
 
@@ -60,7 +66,7 @@ export const fetchMonitorData = async ({ force = false } = {}) => {
   if (hit) return hit
 
   let monitors
-  if (DIRECT) {
+  if (DIRECT && !accessEnabled) {
     monitors = (await fetchMonitorStatus({ apiKey: KEY })).monitors.map(processMonitorData)
   } else {
     const data = await proxyGet(force ? { refresh: 1 } : undefined)
@@ -72,7 +78,7 @@ export const fetchMonitorData = async ({ force = false } = {}) => {
 }
 
 export const fetchMonitorResponseTime = async (monitorId) => {
-  if (DIRECT) return fetchRtApi({ apiKey: KEY, monitorId })
+  if (DIRECT && !accessEnabled) return fetchRtApi({ apiKey: KEY, monitorId })
   return (await proxyGet({ monitorId }))?.responseTimeStats ?? null
 }
 
